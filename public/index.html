@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Performance Artistica</title>
+    <style>
+        body, html {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #initializeButton {
+            font-size: 48px;
+            color: #00BFFF;
+            background: none;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            z-index: 2;
+        }
+
+        #videoContainer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+
+        #gifContainer {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #gifContainer img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #videoPK {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: none;
+            outline: none;
+            display: none;
+        }
+
+        audio {
+            display: none; /* Nascondere l'elemento audio */
+        }
+    </style>
+</head>
+<body>
+    <div id="videoContainer">
+        <div id="gifContainer">
+            <img src="video/Video_init2_loop.gif" alt="Performance">
+        </div>
+        <video id="videoPK" muted playsinline>
+            <source src="video/PK.mp4" type="video/mp4">
+            Il tuo browser non supporta l'elemento video.
+        </video>
+    </div>
+    <button id="initializeButton" onclick="initializeMedia()">Avvia la performance</button>
+    <audio id="audioPlayer">
+        <source src="audio/Beat.mp3" type="audio/mpeg">
+        Il tuo browser non supporta l'elemento audio.
+    </audio>
+    <script>
+        const socket = new WebSocket('wss://109.75.115.206:8082'); // Utilizza il nuovo IP pubblico
+
+        function initializeMedia() {
+            document.getElementById("initializeButton").style.display = "none";
+            const gifContainer = document.getElementById("gifContainer");
+            const videoPK = document.getElementById("videoPK");
+
+            gifContainer.style.display = "none";
+            videoPK.style.display = "block";
+            videoPK.load(); // Prepara il video PK senza avviarlo
+
+            const audioPlayer = document.getElementById("audioPlayer");
+            audioPlayer.play().then(() => {
+                audioPlayer.pause();
+                console.log('Audio inizializzato e messo in pausa');
+            }).catch(error => {
+                console.log('Errore di autoplay audio:', error);
+            });
+        }
+
+        socket.onopen = function() {
+            console.log('Connessione WebSocket stabilita');
+        };
+
+        socket.onerror = function(error) {
+            console.log('Errore WebSocket:', error);
+        };
+
+        socket.onmessage = function(event) {
+            console.log('Messaggio ricevuto dal WebSocket:', event.data);
+            if (event.data === "playAudio") {
+                document.getElementById("audioPlayer").play();
+            } else if (event.data === "pauseAudio") {
+                document.getElementById("audioPlayer").pause();
+            } else if (event.data === "playVideo") {
+                const videoPK = document.getElementById("videoPK");
+                const gifContainer = document.getElementById("gifContainer");
+
+                gifContainer.style.display = "none";
+                videoPK.style.display = "block";
+                videoPK.play().then(() => {
+                    console.log('Video PK avviato');
+                }).catch(error => {
+                    console.log('Errore di autoplay video PK:', error);
+                });
+            } else if (event.data === "pauseVideo") {
+                const videoPK = document.getElementById("videoPK");
+                videoPK.pause();
+                console.log('Video PK in pausa');
+            }
+        };
+
+        function playAudio() {
+            console.log('Invio comando playAudio');
+            socket.send("playAudio");
+        }
+
+        function pauseAudio() {
+            console.log('Invio comando pauseAudio');
+            socket.send("pauseAudio");
+        }
+
+        function playVideo() {
+            console.log('Invio comando playVideo');
+            socket.send("playVideo");
+        }
+
+        function pauseVideo() {
+            console.log('Invio comando pauseVideo');
+            socket.send("pauseVideo");
+        }
+    </script>
+</body>
+</html>

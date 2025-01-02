@@ -1,0 +1,23 @@
+{
+  "name": "performance-origami",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "babel src -d lib"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Performance di musica elettronica con Max MSP e Node.js",
+  "dependencies": {
+    "express": "^4.21.1",
+    "ws": "^8.18.0",
+    "xebra-communicator": "^1.2.5",
+    "xebra.js": "^1.2.5"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0"
+  }
+}
