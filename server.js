@@ -96,9 +96,12 @@ wss.on('connection', function connection(ws) {
     ws.send('Benvenuto al server WebSocket!');
 });
 
-server.listen(8082, () => {
-    console.log('Server in ascolto sulla porta 8082');
-});
+if (!module.parent) {
+    server.listen(8082, () => {
+        console.log('Server in ascolto sulla porta 8082');
+    });
+}
 
 // Esporta il server
 module.exports = server;
+
