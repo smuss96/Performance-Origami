@@ -99,3 +99,6 @@ wss.on('connection', function connection(ws) {
 server.listen(8082, () => {
     console.log('Server in ascolto sulla porta 8082');
 });
+
+// Esporta il server
+module.exports = server;
