@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 715.0, 609.0, 651.0, 310.0 ],
+		"rect" : [ 867.0, 565.0, 651.0, 310.0 ],
 		"gridsize" : [ 15.0, 15.0 ],
 		"boxes" : [ 			{
 				"box" : 				{
@@ -186,7 +186,7 @@
 				"box" : 				{
 					"data" : 					{
 						"http_method" : "get",
-						"url" : "http://localhost:8082/pauseAudio"
+						"url" : "https://ornate-moonbeam-a0837e.netlify.app/pauseAudio"
 					}
 ,
 					"id" : "obj-16",
@@ -302,7 +302,7 @@
 				"box" : 				{
 					"data" : 					{
 						"http_method" : "get",
-						"url" : "http://localhost:8082/playAudio"
+						"url" : "https://tuo-sito.netlify.app/playAudio"
 					}
 ,
 					"id" : "obj-17",
@@ -369,8 +369,6 @@
 					"saved_object_attributes" : 					{
 						"autostart" : 0,
 						"defer" : 0,
-						"node_bin_path" : "",
-						"npm_bin_path" : "",
 						"watch" : 0
 					}
 ,
@@ -499,7 +497,7 @@
 
 			}
  ],
-		"originid" : "pat-9016",
+		"originid" : "pat-28063",
 		"parameters" : 		{
 			"obj-1" : [ "live.text", "live.text", 0 ],
 			"parameterbanks" : 			{
@@ -516,7 +514,7 @@
 ,
 		"dependency_cache" : [ 			{
 				"name" : "server.js",
-				"bootpath" : "~/Desktop/Performance Origami",
+				"bootpath" : "~/Desktop/Performance Origami Repository/Senza nome",
 				"patcherrelativepath" : ".",
 				"type" : "TEXT",
 				"implicit" : 1

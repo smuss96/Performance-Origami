@@ -1,157 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Performance Artistica</title>
+    <title>Performance</title>
     <style>
-        body, html {
-            height: 100%;
-            width: 100%;
+        body {
             margin: 0;
-            background-color: black;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             overflow: hidden;
         }
-
-        #initializeButton {
-            font-size: 48px;
-            color: #00BFFF;
-            background: none;
+        #startButton {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px 40px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
             border: none;
+            font-size: 24px;
             cursor: pointer;
-            position: absolute;
-            z-index: 2;
-        }
-
-        #videoContainer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: black;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1;
-        }
-
-        #gifContainer {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #gifContainer img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        #videoPK {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border: none;
-            outline: none;
-            display: none;
-        }
-
-        audio {
-            display: none; /* Nascondere l'elemento audio */
         }
     </style>
 </head>
 <body>
-    <div id="videoContainer">
-        <div id="gifContainer">
-            <img src="video/Video_init2_loopC.gif" alt="Performance">
-        </div>
-        <video id="videoPK" muted playsinline>
-            <source src="video/PK.mp4" type="video/mp4">
-            Il tuo browser non supporta l'elemento video.
-        </video>
-    </div>
-    <button id="initializeButton" onclick="initializeMedia()">Avvia la performance</button>
-    <audio id="audioPlayer">
-        <source src="audio/Beat.mp3" type="audio/mpeg">
-        Il tuo browser non supporta l'elemento audio.
-    </audio>
+    <button id="startButton">Avvia la performance</button>
     <script>
-        const socket = new WebSocket('wss://109.75.115.206:8082'); // Utilizza il nuovo IP pubblico
+        const startButton = document.getElementById("startButton");
+        const socket = new WebSocket('wss://www.associazioneorigami.it/performance');
 
-        function initializeMedia() {
-            document.getElementById("initializeButton").style.display = "none";
-            const gifContainer = document.getElementById("gifContainer");
-            const videoPK = document.getElementById("videoPK");
-
-            gifContainer.style.display = "none";
-            videoPK.style.display = "block";
-            videoPK.load(); // Prepara il video PK senza avviarlo
-
-            const audioPlayer = document.getElementById("audioPlayer");
-            audioPlayer.play().then(() => {
-                audioPlayer.pause();
-                console.log('Audio inizializzato e messo in pausa');
-            }).catch(error => {
-                console.log('Errore di autoplay audio:', error);
-            });
-        }
-
-        socket.onopen = function() {
-            console.log('Connessione WebSocket stabilita');
+        socket.onopen = function () {
+            console.log("Connessione WebSocket aperta");
         };
 
-        socket.onerror = function(error) {
-            console.log('Errore WebSocket:', error);
+        socket.onerror = function (error) {
+            console.error("Errore WebSocket:", error);
         };
 
-        socket.onmessage = function(event) {
-            console.log('Messaggio ricevuto dal WebSocket:', event.data);
-            if (event.data === "playAudio") {
-                document.getElementById("audioPlayer").play();
-            } else if (event.data === "pauseAudio") {
-                document.getElementById("audioPlayer").pause();
-            } else if (event.data === "playVideo") {
-                const videoPK = document.getElementById("videoPK");
-                const gifContainer = document.getElementById("gifContainer");
+        socket.onmessage = function (event) {
+            console.log("Messaggio ricevuto:", event.data);
+        };
 
-                gifContainer.style.display = "none";
-                videoPK.style.display = "block";
-                videoPK.play().then(() => {
-                    console.log('Video PK avviato');
-                }).catch(error => {
-                    console.log('Errore di autoplay video PK:', error);
-                });
-            } else if (event.data === "pauseVideo") {
-                const videoPK = document.getElementById("videoPK");
-                videoPK.pause();
-                console.log('Video PK in pausa');
+        startButton.addEventListener("click", async () => {
+            try {
+                const audio = new Audio("audio/Beat.mp3");
+                await audio.play();
+                audio.pause();
+                console.log("Audio inizializzato");
+            } catch (error) {
+                console.error("Errore durante l'inizializzazione dell'audio:", error);
             }
-        };
 
-        function playAudio() {
-            console.log('Invio comando playAudio');
-            socket.send("playAudio");
-        }
+            try {
+                const video = document.createElement("video");
+                video.src = "video/PK.mp4";
+                await video.play();
+                video.pause();
+                console.log("Video inizializzato");
+            } catch (error) {
+                console.error("Errore durante l'inizializzazione del video:", error);
+            }
 
-        function pauseAudio() {
-            console.log('Invio comando pauseAudio');
-            socket.send("pauseAudio");
-        }
-
-        function playVideo() {
-            console.log('Invio comando playVideo');
-            socket.send("playVideo");
-        }
-
-        function pauseVideo() {
-            console.log('Invio comando pauseVideo');
-            socket.send("pauseVideo");
-        }
+            // Notifica al server l'inizializzazione completata
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send("initializeMedia");
+            }
+        });
     </script>
 </body>
 </html>
+
